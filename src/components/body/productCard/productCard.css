@@ -1,0 +1,115 @@
+.product-card {
+  width: 173px;
+  height: 272px;
+  border-radius: 20px;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: px;
+  background-color: #fff;
+  box-shadow: 0px 0px 10px 0px #3030300D;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 169px;
+  height: 169px;
+  border-radius: 18px;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin: 0 auto;
+  position: relative;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 18px;
+  display: block;
+}
+
+.product-card:nth-child(5) .product-image img,
+.product-card:nth-child(6) .product-image img {
+  object-position: center;
+}
+
+.product-content {
+  width: 159px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.price-section {
+  width: 159px;
+  height: 19px;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.current-price {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.discount-section {
+  display: flex;
+  gap: 5px;
+  align-items: baseline;
+}
+
+.old-price {
+  font-size: 12px;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.discount-percent {
+  font-size: 12px;
+  color: #ff4444;
+  font-weight: bold;
+}
+
+.product-description {
+  width: 159px;
+  height: 30px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: #666;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  box-orient: vertical;
+  margin-top: 1px;
+}
+
+.select-btn {
+  width: 169px;
+  height: 34px;
+  border-radius: 20px;
+  padding: 10px;
+  background: #F1F1F1;
+  color: #333;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 15px auto 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-sizing: border-box;
+}
+

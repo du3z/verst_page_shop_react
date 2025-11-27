@@ -1,0 +1,19 @@
+.body {
+  width: 100%;
+  padding: 0 5px;
+  display: flex;
+  justify-content: center;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 173px);
+  gap: 5px;
+}
+
+@media (max-width: 360px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 173px);
+    gap: 5px;
+  }
+}

@@ -1,0 +1,133 @@
+.footer {
+  width: 100%;
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.footer-top {
+  width: 360px;
+  height: 37px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-text {
+  width: 182px;
+  height: 37px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.footer-text p {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: #8B8B8B;
+  margin: 0;
+}
+
+.footer-badge {
+  width: 90px;
+  height: 19px;
+  border-radius: 20px;
+  padding: 4px 7px 5px 5px;
+  background: rgba(139, 139, 139, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.badge-icon {
+  width: 11px;
+  height: 10px;
+}
+
+.badge-text {
+  width: 62px;
+  height: 8px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1.05;
+  letter-spacing: 0;
+  color: #8B8B8B;
+  display: flex;
+  align-items: center;
+}
+
+
+.footer-bottom {
+  width: 360px;
+  height: 71px;
+  margin-top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-container {
+  width: 360px;
+  height: 53px;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-nav {
+  width: 350px;
+  height: 53px;
+  border-radius: 30px;
+  border: 1px solid rgba(108, 108, 108, 0.1);
+  backdrop-filter: blur(30px);
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28.5px;
+  box-sizing: border-box;
+}
+
+.nav-item {
+  width: 21px;
+  height: 21px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.home-icon,
+.catalog-icon,
+.favorite-icon,
+.cart-icon,
+.account-icon {
+  border: none;
+  border-radius: 0;
+}
+
+
+
+@media (max-width: 360px) {
+  .footer-top,
+  .footer-bottom,
+  .nav-container {
+    width: 100%;
+  }
+  
+  .footer-nav {
+    width: calc(100% - 10px);
+    padding: 0 20px;
+  }
+}
