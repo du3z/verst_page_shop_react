@@ -9,14 +9,13 @@ const SearchBar = ({ searchQuery, setSearchQuery, onProductSelect }) => {
     setIsFullscreenOpen(true);
   };
 
-  // Обработчик клика по инпуту (если он readonly)
+
   const handleClick = () => {
     setIsFullscreenOpen(true);
   };
 
   return (
     <>
-      {/* Обычная строка поиска в хедере */}
       <div className="search-container">
         <form className="search-form" onSubmit={(e) => e.preventDefault()}>
           <input
@@ -27,12 +26,11 @@ const SearchBar = ({ searchQuery, setSearchQuery, onProductSelect }) => {
             onClick={handleClick}
             placeholder="Найти товар"
             className="search-input"
-            readOnly // Делаем readonly чтобы клавиатура не открывалась на мобилке
           />
         </form>
       </div>
 
-      {/* Полноэкранный поиск */}
+
       <FullscreenSearch
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}

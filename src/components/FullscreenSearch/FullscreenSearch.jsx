@@ -23,7 +23,6 @@ const FullscreenSearch = ({
     'Сертификат'
   ];
 
-  // Фокусируемся на инпуте при открытии
   useEffect(() => {
     if (isOpen && inputRef.current) {
       setTimeout(() => {
@@ -32,7 +31,6 @@ const FullscreenSearch = ({
     }
   }, [isOpen]);
 
-  // Поиск товаров
   useEffect(() => {
     if (searchQuery.trim()) {
       const results = productsData.filter(product =>
@@ -69,13 +67,11 @@ const FullscreenSearch = ({
       handleGoToSearch();
     }
     
-    // ESC для закрытия
     if (e.key === 'Escape') {
       onClose();
     }
   };
 
-  // Закрытие при клике вне инпута (если пусто)
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget && !searchQuery.trim()) {
       onClose();
@@ -86,7 +82,6 @@ const FullscreenSearch = ({
 
   return (
     <div className="fullscreen-search-overlay" onClick={handleOverlayClick}>
-      {/* Хедер с инпутом и кнопкой "Перейти" ВНУТРИ */}
       <div className="fullscreen-search-header">
         <div className="search-input-with-button">
           <div className="search-input-wrapper">
@@ -100,7 +95,6 @@ const FullscreenSearch = ({
               className="fullscreen-search-input"
             />
             
-            {/* Кнопка "Перейти" показывается ТОЛЬКО когда есть текст */}
             {searchQuery.trim() && (
               <button 
                 className="go-to-search-header-btn"
@@ -113,17 +107,13 @@ const FullscreenSearch = ({
         </div>
       </div>
 
-      {/* Контент поиска */}
       <div className="fullscreen-search-content">
         
-        {/* Заголовок "Часто ищут" (только когда пусто) */}
         {!searchQuery && (
           <>
             <h3 className="popular-title">
               Часто ищут
             </h3>
-            
-            {/* Список популярных запросов */}
             <div className="popular-searches">
               {popularSearches.map((term, index) => (
                 <button 
@@ -138,7 +128,6 @@ const FullscreenSearch = ({
           </>
         )}
 
-        {/* Результаты поиска (если есть текст) */}
         {searchQuery && searchResults.length > 0 && (
           <div className="search-results-container">
             <div className="search-results">
@@ -172,7 +161,6 @@ const FullscreenSearch = ({
           </div>
         )}
 
-        {/* Сообщение если ничего не найдено */}
         {searchQuery && searchResults.length === 0 && (
           <div className="no-results">
             Ничего не найдено по запросу "{searchQuery}"

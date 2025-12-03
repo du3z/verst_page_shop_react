@@ -172,7 +172,6 @@
   line-height: 1.15;
   color: #292928;
   overflow: hidden;
-  textOverflow: ellipsis;
   white-space: nowrap;
 }
 
