@@ -23,7 +23,7 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-top">
         <div className="footer-text">
-          <p>Твой магазин - лучшие товары</p>
+          <p>Разработано на платформе Noxer</p>
           <div className="footer-badge">
             <img src={BadgeIcon} alt="" className="badge-icon" />
             <span className="badge-text">noxerai_bot</span>

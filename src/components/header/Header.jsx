@@ -1,16 +1,24 @@
-import React from 'react';
-import SearchBar from './searchbar/searchBar.jsx';
-import PromoBanner from './promoBanner/promoBanner.jsx';
-import Categories from './categories/categories.jsx';
-import './Header.css';
+import SearchBar from './searchbar/searchBar';
+import PromoBanner from './promoBanner/promoBanner'
+import Categories from './categories/categories'
 
-const Header = () => {
+
+const Header = ({ searchQuery, setSearchQuery, onSearchFocus }) => {
+  const handleProductSelect = (product) => {
+    console.log('Выбран товар из поиска:', product);
+  };
+
   return (
     <header className="header">
       <div className="header-container">
-        <SearchBar />   
+        <SearchBar 
+          searchQuery={searchQuery} 
+          setSearchQuery={setSearchQuery}
+          onProductSelect={handleProductSelect}
+          onFocus={onSearchFocus}
+        />   
         <PromoBanner />
-         <Categories />
+        <Categories />
       </div>
     </header>
   );

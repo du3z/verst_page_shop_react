@@ -108,6 +108,16 @@
   padding: 0;
 }
 
+.nav-item:focus {
+  outline: none ;
+  box-shadow: none ;
+}
+
+.nav-item:active {
+  outline: none ;
+  box-shadow: none ;
+}
+
 .home-icon,
 .catalog-icon,
 .favorite-icon,
