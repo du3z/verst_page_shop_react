@@ -1,116 +1,61 @@
 // ============================================
-// Компонент формы добавления транзакции
+// Главный модуль приложения FinControl
+// Точка входа, инициализация всех компонентов
 // ============================================
 
-import { store } from '../store.js';
-import { CATEGORIES, TRANSACTION_TYPES } from '../config.js';
-import { validateTransactionForm } from '../utils/validators.js';
-import { $, hideAllErrors, showError } from '../utils/dom.js';
+import { store } from './store.js';
+import { TableComponent } from './components/table.js';
+import { TabsComponent } from './components/tabs.js';
+import { FormComponent } from './components/form.js';
+import { APP_CONFIG } from './config.js';
 
-export class FormComponent {
+class App {
     constructor() {
-        this.form = $('#addForm');
-        this.typeSelect = $('#type');
-        this.categorySelect = $('#category');
-        this.dateInput = $('#date');
+        this.table = null;
+        this.tabs = null;
+        this.form = null;
     }
 
-    // Инициализация
+    // Инициализация приложения
     init() {
-        // Установка даты по умолчанию
-        this.dateInput.value = new Date().toISOString().split('T')[0];
+        console.log(`Запуск ${APP_CONFIG.name} v${APP_CONFIG.version}`);
+        
+        // Инициализация хранилища
+        store.init();
+        
+        // Инициализация компонентов
+        this.table = new TableComponent();
+        this.form = new FormComponent();
+        this.tabs = new TabsComponent(this.table);
+        
+        // Запуск компонентов
+        this.table.init();
+        this.form.init();
+        this.tabs.init();
+        
+        // Глобальные обработчики
+        this.setupGlobalHandlers();
+        
+        console.log('Приложение готово к работе');
+        console.log('Транзакций загружено:', store.getAll().length);
+    }
 
-        // Обработчик изменения типа
-        this.typeSelect.addEventListener('change', () => {
-            this.updateCategories();
-        });
-
-        // Обработчик отправки формы
-        this.form.addEventListener('submit', (e) => {
+    // Глобальные обработчики
+    setupGlobalHandlers() {
+        // Обработчик выхода (заглушка)
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
-            this.handleSubmit();
+            console.log('Выход из системы');
+            alert('Выход из системы (заглушка)');
         });
-
-        // Инициализация категорий
-        this.typeSelect.value = TRANSACTION_TYPES.EXPENSE;
-        this.updateCategories();
-    }
-
-    // Обновление категорий в зависимости от типа
-    updateCategories() {
-        const type = this.typeSelect.value;
-        const categories = CATEGORIES[type] || [];
-
-        this.categorySelect.innerHTML = '';
-        
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category;
-            this.categorySelect.appendChild(option);
-        });
-    }
-
-    // Обработчик отправки
-    handleSubmit() {
-        const formData = this.getFormData();
-        const validation = validateTransactionForm(formData);
-
-        hideAllErrors();
-
-        if (!validation.isValid) {
-            this.showValidationErrors(validation.errors);
-            console.warn('Форма не прошла валидацию:', validation.errors);
-            return;
-        }
-
-        // Добавляем транзакцию
-        const transaction = store.add({
-            type: formData.type,
-            date: formData.date,
-            category: formData.category,
-            desc: formData.desc,
-            amount: parseFloat(formData.amount)
-        });
-
-        console.log('Добавлена новая транзакция:', transaction);
-        
-        // Сбрасываем форму
-        this.resetForm();
-        
-        // Показываем уведомление
-        this.showNotification('Транзакция успешно добавлена!');
-    }
-
-    // Получение данных формы
-    getFormData() {
-        return {
-            type: this.typeSelect.value,
-            amount: $('#amount').value,
-            category: this.categorySelect.value,
-            desc: $('#desc').value.trim(),
-            date: this.dateInput.value
-        };
-    }
-
-    // Показ ошибок валидации
-    showValidationErrors(errors) {
-        if (errors.type) showError('typeError');
-        if (errors.amount) showError('amountError');
-        if (errors.date) showError('dateError');
-    }
-
-    // Сброс формы
-    resetForm() {
-        this.form.reset();
-        this.dateInput.value = new Date().toISOString().split('T')[0];
-        this.typeSelect.value = TRANSACTION_TYPES.EXPENSE;
-        this.updateCategories();
-    }
-
-    // Уведомление (заглушка)
-    showNotification(message) {
-        alert(message);
-        // В будущем заменить на красивое уведомление
     }
 }
+
+// Запуск приложения при загрузке DOM
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new App();
+    app.init();
+});
+
+// Экспорт для возможного тестирования
+export default App;
