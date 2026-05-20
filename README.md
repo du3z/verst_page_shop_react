@@ -14,4 +14,44 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# verst_page_shop_react
+# verst_page_shop_rea
+
+@startuml
+left to right direction
+skinparam packageStyle rect
+
+actor "Пользователь" as User
+actor "Администратор" as Admin
+
+rectangle "Сервис FinControl" {
+  usecase "Зарегистрироваться" as UC_Register
+  usecase "Авторизоваться" as UC_Login
+  usecase "Просматривать баланс\nи историю" as UC_View
+  usecase "Управлять транзакциями\n(добавлять, удалять)" as UC_ManageTx
+  usecase "Просматривать аналитику\n(диаграмму)" as UC_Analytics
+  usecase "Управлять категориями\n(CRUD)" as UC_ManageCat
+  
+  usecase "Экспортировать отчет\nв PDF" as UC_Export
+}
+
+' Наследование акторов: Администратор — это Пользователь с доп. правами
+Admin --|> User
+
+' Ассоциации акторов с прецедентами
+User -- UC_Register
+User -- UC_Login
+User -- UC_View
+User -- UC_ManageTx
+User -- UC_Analytics
+
+Admin -- UC_ManageCat
+
+' Связи между прецедентами
+UC_View ..> UC_Login : <<include>>
+UC_ManageTx ..> UC_Login : <<include>>
+UC_Analytics ..> UC_Login : <<include>>
+UC_ManageCat ..> UC_Login : <<include>>
+
+UC_Analytics <.. UC_Export : <<extend>>
+
+@enduml
