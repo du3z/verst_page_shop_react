@@ -1,91 +1,46 @@
 // ============================================
-// Компонент таблицы транзакций
+// Компонент переключения вкладок
 // ============================================
 
-import { store } from '../store.js';
-import { formatDate, formatAmount, getAmountClass } from '../utils/formatters.js';
-import { $ } from '../utils/dom.js';
+import { TAB_FILTERS } from '../config.js';
+import { $$ } from '../utils/dom.js';
 
-export class TableComponent {
-    constructor() {
-        this.tableBody = $('#tableBody');
-        this.currentFilter = 'all';
+export class TabsComponent {
+    constructor(tableComponent) {
+        this.tableComponent = tableComponent;
+        this.tabButtons = $$('.tab-btn');
+        this.activeClass = 'tab-btn--active';
     }
 
     // Инициализация
     init() {
-        store.subscribe(() => this.render());
-        this.render();
-    }
-
-    // Установка фильтра
-    setFilter(filter) {
-        this.currentFilter = filter;
-        this.render();
-    }
-
-    // Рендеринг таблицы
-    render() {
-        const transactions = store.getFiltered(this.currentFilter);
-        this.tableBody.innerHTML = '';
-
-        if (transactions.length === 0) {
-            this.renderEmpty();
-            return;
-        }
-
-        // Сортировка по дате (новые сверху)
-        transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        transactions.forEach(transaction => {
-            this.tableBody.appendChild(this.createRow(transaction));
+        this.tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                this.activateTab(button);
+            });
         });
     }
 
-    // Создание строки таблицы
-    createRow(transaction) {
-        const row = document.createElement('tr');
+    // Активация вкладки
+    activateTab(selectedButton) {
+        // Убираем активный класс у всех
+        this.tabButtons.forEach(btn => {
+            btn.classList.remove(this.activeClass);
+        });
 
-        row.innerHTML = `
-            <td>${formatDate(transaction.date)}</td>
-            <td>${transaction.category}</td>
-            <td>${transaction.desc || '—'}</td>
-            <td class="${getAmountClass(transaction.type)}">
-                ${formatAmount(transaction.amount, transaction.type)}
-            </td>
-            <td>
-                <button 
-                    class="btn-delete" 
-                    data-id="${transaction.id}"
-                    title="Удалить транзакцию"
-                >
-                    Удалить
-                </button>
-            </td>
-        `;
+        // Добавляем активный класс выбранной
+        selectedButton.classList.add(this.activeClass);
 
-        // Добавляем обработчик удаления
-        const deleteBtn = row.querySelector('.btn-delete');
-        deleteBtn.addEventListener('click', () => this.handleDelete(transaction.id));
+        // Получаем фильтр и обновляем таблицу
+        const filter = selectedButton.dataset.tab;
+        this.tableComponent.setFilter(filter);
 
-        return row;
+        console.log(`Переключение на вкладку: ${filter}`);
     }
 
-    // Рендеринг пустой таблицы
-    renderEmpty() {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td colspan="5" class="empty-message">
-                Нет транзакций для отображения
-            </td>
-        `;
-        this.tableBody.appendChild(row);
-    }
-
-    // Обработчик удаления
-    handleDelete(id) {
-        if (confirm('Вы уверены, что хотите удалить эту транзакцию?')) {
-            store.remove(id);
-        }
+    // Получить текущий фильтр
+    getCurrentFilter() {
+        const activeTab = document.querySelector(`.${this.activeClass}`);
+        return activeTab ? activeTab.dataset.tab : TAB_FILTERS.ALL;
     }
 }
