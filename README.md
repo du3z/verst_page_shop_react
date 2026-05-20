@@ -1,64 +1,83 @@
 // ============================================
-// Валидаторы форм
+// Утилиты для работы с DOM
 // ============================================
 
-import { ERROR_MESSAGES } from '../config.js';
-
 /**
- * Валидатор обязательного поля
+ * Получить элемент по селектору
  */
-export function required(value) {
-    return {
-        isValid: value !== '' && value !== null && value !== undefined,
-        message: ERROR_MESSAGES.TYPE_REQUIRED
-    };
+export function $(selector, parent = document) {
+    return parent.querySelector(selector);
 }
 
 /**
- * Валидатор положительного числа
+ * Получить все элементы по селектору
  */
-export function positiveNumber(value) {
-    const num = parseFloat(value);
-    return {
-        isValid: !isNaN(num) && num > 0,
-        message: ERROR_MESSAGES.AMOUNT_INVALID
-    };
+export function $$(selector, parent = document) {
+    return Array.from(parent.querySelectorAll(selector));
 }
 
 /**
- * Валидатор даты
+ * Показать/скрыть элемент
  */
-export function validDate(value) {
-    return {
-        isValid: value !== '' && !isNaN(new Date(value).getTime()),
-        message: ERROR_MESSAGES.DATE_REQUIRED
-    };
+export function toggle(element, show) {
+    if (typeof element === 'string') {
+        element = $(element);
+    }
+    element.style.display = show ? '' : 'none';
 }
 
 /**
- * Комплексная валидация формы транзакции
+ * Показать ошибку
  */
-export function validateTransactionForm(formData) {
-    const errors = {};
+export function showError(errorId) {
+    const errorElement = document.getElementById(errorId);
+    if (errorElement) {
+        errorElement.classList.add('form__error--visible');
+    }
+}
+
+/**
+ * Скрыть ошибку
+ */
+export function hideError(errorId) {
+    const errorElement = document.getElementById(errorId);
+    if (errorElement) {
+        errorElement.classList.remove('form__error--visible');
+    }
+}
+
+/**
+ * Скрыть все ошибки
+ */
+export function hideAllErrors() {
+    $$('.form__error').forEach(error => {
+        error.classList.remove('form__error--visible');
+    });
+}
+
+/**
+ * Создать элемент с классами и атрибутами
+ */
+export function createElement(tag, options = {}) {
+    const element = document.createElement(tag);
     
-    // Тип операции
-    if (!formData.type) {
-        errors.type = ERROR_MESSAGES.TYPE_REQUIRED;
+    if (options.classes) {
+        element.classList.add(...options.classes);
     }
     
-    // Сумма
-    const amount = parseFloat(formData.amount);
-    if (!formData.amount || isNaN(amount) || amount <= 0) {
-        errors.amount = ERROR_MESSAGES.AMOUNT_INVALID;
+    if (options.attributes) {
+        Object.entries(options.attributes).forEach(([key, value]) => {
+            element.setAttribute(key, value);
+        });
     }
     
-    // Дата
-    if (!formData.date) {
-        errors.date = ERROR_MESSAGES.DATE_REQUIRED;
+    if (options.text) {
+        element.textContent = options.text;
     }
     
-    return {
-        isValid: Object.keys(errors).length === 0,
-        errors
-    };
+    if (options.html) {
+        element.innerHTML = options.html;
+    }
+    
+    return element;
 }
