@@ -1,45 +1,106 @@
-export const APP_CONFIG = {
-    name: 'FinControl',
-    version: '1.0.0',
-    currency: '₽',
-    locale: 'ru-RU'
-};
+import { TRANSACTION_TYPES } from './config.js';
 
-export const TRANSACTION_TYPES = {
-    INCOME: 'income',
-    EXPENSE: 'expense'
-};
+class Store {
+    constructor() {
+        this.transactions = [];
+        this.nextId = 1;
+        this.listeners = [];
+    }
 
-export const CATEGORIES = {
-    [TRANSACTION_TYPES.INCOME]: [
-        'Зарплата',
-        'Фриланс',
-        'Инвестиции',
-        'Подарки',
-        'Кэшбек',
-        'Другое'
-    ],
-    [TRANSACTION_TYPES.EXPENSE]: [
-        'Продукты',
-        'Транспорт',
-        'Развлечения',
-        'Здоровье',
-        'Образование',
-        'Коммунальные услуги',
-        'Одежда',
-        'Связь',
-        'Другое'
-    ]
-};
+    // Инициализация с тестовыми данными
+    init() {
+        const today = new Date();
+        const formatDate = (daysOffset = 0) => {
+            const date = new Date(today);
+            date.setDate(date.getDate() - daysOffset);
+            return date.toISOString().split('T')[0];
+        };
 
-export const TAB_FILTERS = {
-    ALL: 'all',
-    INCOME: 'income',
-    EXPENSE: 'expense'
-};
+        this.transactions = [
+            {
+                id: this.nextId++,
+                type: TRANSACTION_TYPES.INCOME,
+                date: formatDate(0),
+                category: 'Зарплата',
+                desc: 'Аванс за май',
+                amount: 30000
+            },
+            {
+                id: this.nextId++,
+                type: TRANSACTION_TYPES.EXPENSE,
+                date: formatDate(1),
+                category: 'Продукты',
+                desc: 'Пятёрочка, недельный закуп',
+                amount: 2500
+            },
+            {
+                id: this.nextId++,
+                type: TRANSACTION_TYPES.EXPENSE,
+                date: formatDate(2),
+                category: 'Транспорт',
+                desc: 'Проездной на месяц',
+                amount: 1500
+            },
+            {
+                id: this.nextId++,
+                type: TRANSACTION_TYPES.INCOME,
+                date: formatDate(3),
+                category: 'Зарплата',
+                desc: 'Основная зарплата',
+                amount: 50000
+            }
+        ];
 
-export const ERROR_MESSAGES = {
-    TYPE_REQUIRED: 'Выберите тип операции',
-    AMOUNT_INVALID: 'Сумма должна быть положительным числом',
-    DATE_REQUIRED: 'Выберите дату'
-};
+        this.notifyListeners();
+    }
+
+    // Получить все транзакции
+    getAll() {
+        return [...this.transactions];
+    }
+
+    // Добавить транзакцию
+    add(transaction) {
+        const newTransaction = {
+            id: this.nextId++,
+            ...transaction
+        };
+        this.transactions.push(newTransaction);
+        this.notifyListeners();
+        return newTransaction;
+    }
+
+    // Удалить транзакцию
+    remove(id) {
+        const index = this.transactions.findIndex(t => t.id === id);
+        if (index !== -1) {
+            this.transactions.splice(index, 1);
+            this.notifyListeners();
+            return true;
+        }
+        return false;
+    }
+
+    // Получить транзакции по фильтру
+    getFiltered(filter) {
+        if (filter === 'all') return this.getAll();
+        return this.transactions.filter(t => t.type === filter);
+    }
+
+    // Подписка на изменения
+    subscribe(listener) {
+        this.listeners.push(listener);
+        // Возвращаем функцию для отписки
+        return () => {
+            this.listeners = this.listeners.filter(l => l !== listener);
+        };
+    }
+
+    // Уведомление подписчиков
+    notifyListeners() {
+        this.listeners.forEach(listener => listener(this.transactions));
+    }
+}
+
+// Singleton
+export const store = new Store();
