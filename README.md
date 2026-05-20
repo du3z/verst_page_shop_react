@@ -1,34 +1,64 @@
+// ============================================
+// Валидаторы форм
+// ============================================
 
+import { ERROR_MESSAGES } from '../config.js';
 
-import { APP_CONFIG } from '../config.js'
-export function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(APP_CONFIG.locale, {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
+/**
+ * Валидатор обязательного поля
+ */
+export function required(value) {
+    return {
+        isValid: value !== '' && value !== null && value !== undefined,
+        message: ERROR_MESSAGES.TYPE_REQUIRED
+    };
 }
-export function formatAmount(amount, type) {
-    const formatted = Math.abs(amount).toLocaleString(APP_CONFIG.locale, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+
+/**
+ * Валидатор положительного числа
+ */
+export function positiveNumber(value) {
+    const num = parseFloat(value);
+    return {
+        isValid: !isNaN(num) && num > 0,
+        message: ERROR_MESSAGES.AMOUNT_INVALID
+    };
+}
+
+/**
+ * Валидатор даты
+ */
+export function validDate(value) {
+    return {
+        isValid: value !== '' && !isNaN(new Date(value).getTime()),
+        message: ERROR_MESSAGES.DATE_REQUIRED
+    };
+}
+
+/**
+ * Комплексная валидация формы транзакции
+ */
+export function validateTransactionForm(formData) {
+    const errors = {};
     
-    const prefix = type === 'income' ? '+' : '-';
-    return `${prefix}${formatted} ${APP_CONFIG.currency}`;
-}
-
-/**
- * Получение CSS-класса для суммы
- */
-export function getAmountClass(type) {
-    return type === 'income' ? 'income-amount' : 'expense-amount';
-}
-
-/**
- * Форматирование для вывода в консоль
- */
-export function logTransaction(transaction) {
-    return `[${transaction.type.toUpperCase()}] ${transaction.category}: ${transaction.amount}${APP_CONFIG.currency}`;
+    // Тип операции
+    if (!formData.type) {
+        errors.type = ERROR_MESSAGES.TYPE_REQUIRED;
+    }
+    
+    // Сумма
+    const amount = parseFloat(formData.amount);
+    if (!formData.amount || isNaN(amount) || amount <= 0) {
+        errors.amount = ERROR_MESSAGES.AMOUNT_INVALID;
+    }
+    
+    // Дата
+    if (!formData.date) {
+        errors.date = ERROR_MESSAGES.DATE_REQUIRED;
+    }
+    
+    return {
+        isValid: Object.keys(errors).length === 0,
+        errors
+    };
 }
