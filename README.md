@@ -1,57 +1,110 @@
-# React + Vite
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinControl - Управление транзакциями</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header__container">
+            <h1 class="header__logo">FinControl</h1>
+            <div class="header__user">
+                <span class="header__username" id="username">Иванов И.И.</span>
+                <a href="#" class="header__logout" id="logoutBtn">Выйти</a>
+            </div>
+        </div>
+    </header>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+    <main class="container">
+        <section class="transactions">
+            <h2 class="transactions__title">Управление транзакциями</h2>
+            
+            <!-- Табы -->
+            <nav class="tabs" id="transactionTabs">
+                <button class="tab-btn tab-btn--active" data-tab="all">Все</button>
+                <button class="tab-btn" data-tab="income">Доходы</button>
+                <button class="tab-btn" data-tab="expense">Расходы</button>
+            </nav>
 
-Currently, two official plugins are available:
+            <!-- Таблица -->
+            <div class="table-wrapper">
+                <table class="table" id="dataTable">
+                    <thead class="table__head">
+                        <tr>
+                            <th>Дата</th>
+                            <th>Категория</th>
+                            <th>Описание</th>
+                            <th>Сумма</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table__body" id="tableBody">
+                        <!-- Динамическое наполнение -->
+                    </tbody>
+                </table>
+            </div>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+            <!-- Форма -->
+            <section class="add-form">
+                <h3 class="add-form__title">Добавить новую запись</h3>
+                <form id="addForm" class="form" novalidate>
+                    <div class="form__group">
+                        <label for="type" class="form__label">Тип операции</label>
+                        <select id="type" class="form__input" required>
+                            <option value="">Выберите тип...</option>
+                            <option value="income">Доход</option>
+                            <option value="expense">Расход</option>
+                        </select>
+                        <div class="form__error" id="typeError">Выберите тип операции</div>
+                    </div>
 
-## React Compiler
+                    <div class="form__group">
+                        <label for="amount" class="form__label">Сумма (₽)</label>
+                        <input 
+                            type="number" 
+                            id="amount" 
+                            class="form__input" 
+                            placeholder="Введите сумму"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
+                        <div class="form__error" id="amountError">Сумма должна быть положительным числом</div>
+                    </div>
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+                    <div class="form__group">
+                        <label for="category" class="form__label">Категория</label>
+                        <select id="category" class="form__input"></select>
+                    </div>
 
-## Expanding the ESLint configuration
+                    <div class="form__group">
+                        <label for="desc" class="form__label">Описание</label>
+                        <input 
+                            type="text" 
+                            id="desc" 
+                            class="form__input" 
+                            placeholder="Описание операции"
+                        >
+                    </div>
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# verst_page_shop_rea
+                    <div class="form__group">
+                        <label for="date" class="form__label">Дата</label>
+                        <input type="date" id="date" class="form__input" required>
+                    </div>
 
-@startuml
-left to right direction
-skinparam packageStyle rect
+                    <button type="submit" class="form__submit">Добавить транзакцию</button>
+                </form>
+            </section>
+        </section>
+    </main>
 
-actor "Пользователь" as User
-actor "Администратор" as Admin
+    <footer class="footer">
+        <p class="footer__text">© 2026 FinControl. Учебный проект</p>
+    </footer>
 
-rectangle "Сервис FinControl" {
-  usecase "Зарегистрироваться" as UC_Register
-  usecase "Авторизоваться" as UC_Login
-  usecase "Просматривать баланс\nи историю" as UC_View
-  usecase "Управлять транзакциями\n(добавлять, удалять)" as UC_ManageTx
-  usecase "Просматривать аналитику\n(диаграмму)" as UC_Analytics
-  usecase "Управлять категориями\n(CRUD)" as UC_ManageCat
-  
-  usecase "Экспортировать отчет\nв PDF" as UC_Export
-}
-
-' Наследование акторов: Администратор — это Пользователь с доп. правами
-Admin --|> User
-
-' Ассоциации акторов с прецедентами
-User -- UC_Register
-User -- UC_Login
-User -- UC_View
-User -- UC_ManageTx
-User -- UC_Analytics
-
-Admin -- UC_ManageCat
-
-' Связи между прецедентами
-UC_View ..> UC_Login : <<include>>
-UC_ManageTx ..> UC_Login : <<include>>
-UC_Analytics ..> UC_Login : <<include>>
-UC_ManageCat ..> UC_Login : <<include>>
-
-UC_Analytics <.. UC_Export : <<extend>>
-
-@enduml
+    <!-- Главный модуль приложения -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
