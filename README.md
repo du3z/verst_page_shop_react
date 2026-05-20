@@ -1,46 +1,116 @@
 // ============================================
-// Компонент переключения вкладок
+// Компонент формы добавления транзакции
 // ============================================
 
-import { TAB_FILTERS } from '../config.js';
-import { $$ } from '../utils/dom.js';
+import { store } from '../store.js';
+import { CATEGORIES, TRANSACTION_TYPES } from '../config.js';
+import { validateTransactionForm } from '../utils/validators.js';
+import { $, hideAllErrors, showError } from '../utils/dom.js';
 
-export class TabsComponent {
-    constructor(tableComponent) {
-        this.tableComponent = tableComponent;
-        this.tabButtons = $$('.tab-btn');
-        this.activeClass = 'tab-btn--active';
+export class FormComponent {
+    constructor() {
+        this.form = $('#addForm');
+        this.typeSelect = $('#type');
+        this.categorySelect = $('#category');
+        this.dateInput = $('#date');
     }
 
     // Инициализация
     init() {
-        this.tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                this.activateTab(button);
-            });
+        // Установка даты по умолчанию
+        this.dateInput.value = new Date().toISOString().split('T')[0];
+
+        // Обработчик изменения типа
+        this.typeSelect.addEventListener('change', () => {
+            this.updateCategories();
+        });
+
+        // Обработчик отправки формы
+        this.form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleSubmit();
+        });
+
+        // Инициализация категорий
+        this.typeSelect.value = TRANSACTION_TYPES.EXPENSE;
+        this.updateCategories();
+    }
+
+    // Обновление категорий в зависимости от типа
+    updateCategories() {
+        const type = this.typeSelect.value;
+        const categories = CATEGORIES[type] || [];
+
+        this.categorySelect.innerHTML = '';
+        
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            this.categorySelect.appendChild(option);
         });
     }
 
-    // Активация вкладки
-    activateTab(selectedButton) {
-        // Убираем активный класс у всех
-        this.tabButtons.forEach(btn => {
-            btn.classList.remove(this.activeClass);
+    // Обработчик отправки
+    handleSubmit() {
+        const formData = this.getFormData();
+        const validation = validateTransactionForm(formData);
+
+        hideAllErrors();
+
+        if (!validation.isValid) {
+            this.showValidationErrors(validation.errors);
+            console.warn('Форма не прошла валидацию:', validation.errors);
+            return;
+        }
+
+        // Добавляем транзакцию
+        const transaction = store.add({
+            type: formData.type,
+            date: formData.date,
+            category: formData.category,
+            desc: formData.desc,
+            amount: parseFloat(formData.amount)
         });
 
-        // Добавляем активный класс выбранной
-        selectedButton.classList.add(this.activeClass);
-
-        // Получаем фильтр и обновляем таблицу
-        const filter = selectedButton.dataset.tab;
-        this.tableComponent.setFilter(filter);
-
-        console.log(`Переключение на вкладку: ${filter}`);
+        console.log('Добавлена новая транзакция:', transaction);
+        
+        // Сбрасываем форму
+        this.resetForm();
+        
+        // Показываем уведомление
+        this.showNotification('Транзакция успешно добавлена!');
     }
 
-    // Получить текущий фильтр
-    getCurrentFilter() {
-        const activeTab = document.querySelector(`.${this.activeClass}`);
-        return activeTab ? activeTab.dataset.tab : TAB_FILTERS.ALL;
+    // Получение данных формы
+    getFormData() {
+        return {
+            type: this.typeSelect.value,
+            amount: $('#amount').value,
+            category: this.categorySelect.value,
+            desc: $('#desc').value.trim(),
+            date: this.dateInput.value
+        };
+    }
+
+    // Показ ошибок валидации
+    showValidationErrors(errors) {
+        if (errors.type) showError('typeError');
+        if (errors.amount) showError('amountError');
+        if (errors.date) showError('dateError');
+    }
+
+    // Сброс формы
+    resetForm() {
+        this.form.reset();
+        this.dateInput.value = new Date().toISOString().split('T')[0];
+        this.typeSelect.value = TRANSACTION_TYPES.EXPENSE;
+        this.updateCategories();
+    }
+
+    // Уведомление (заглушка)
+    showNotification(message) {
+        alert(message);
+        // В будущем заменить на красивое уведомление
     }
 }
